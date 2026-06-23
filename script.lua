@@ -1860,6 +1860,7 @@ end)
 -- NoClip + Teleport Detection - ONLY when farming features are active
 task.spawn(function()
     local lastPosition = nil
+    local wasNoclipping = false
 
     RunService.RenderStepped:Connect(function()
         local isFarming = Options['autolvl'].Value
@@ -1871,6 +1872,8 @@ task.spawn(function()
             or Options['autoguild'].Value
 
         if isFarming and getCharacter() then
+            wasNoclipping = true
+
             -- Noclip: disable collision
             for _, part in pairs(getCharacter():GetDescendants()) do
                 if (part:IsA("BasePart") and (part.CanCollide == true)) then
@@ -1905,6 +1908,15 @@ task.spawn(function()
                 lastPosition = currentPos
             end
         else
+            -- Restore collision when farming is turned off
+            if wasNoclipping and getCharacter() then
+                for _, part in pairs(getCharacter():GetDescendants()) do
+                    if part:IsA("BasePart") then
+                        part.CanCollide = true
+                    end
+                end
+                wasNoclipping = false
+            end
             lastPosition = nil
         end
     end)
