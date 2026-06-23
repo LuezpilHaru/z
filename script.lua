@@ -1910,11 +1910,33 @@ task.spawn(function()
         else
             -- Restore collision when farming is turned off
             if wasNoclipping and getCharacter() then
+                -- Cancel active tween
+                if currentTween then
+                    currentTween:Cancel()
+                    currentTween = nil
+                end
+
+                -- Restore collision
                 for _, part in pairs(getCharacter():GetDescendants()) do
                     if part:IsA("BasePart") then
                         part.CanCollide = true
                     end
                 end
+
+                -- Reset velocity to stop flying
+                local hrp = getHumanoidRootPart()
+                if hrp then
+                    hrp.Velocity = Vector3.new(0, 0, 0)
+                    hrp.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+                end
+
+                -- Clean up platform parts
+                for _, child in next, workspace:GetChildren() do
+                    if (child.Name == "huehueheue") then
+                        child:Destroy()
+                    end
+                end
+
                 wasNoclipping = false
             end
             lastPosition = nil
