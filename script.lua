@@ -3,27 +3,9 @@
     Deobfuscated from LuaObfuscator.com (Alpha 0.10.9)
 ]]--
 
--- Key system check
-if (getgenv().key == "lxrkngg") then
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/GSstarGamer/roblox-scripts/refs/heads/main/Swordburst3UpdatedOBF.lua"))()
-    return
-end
-
 -- Wait for game to load
 repeat task.wait() until game:IsLoaded()
 
--- Key system UI (if enabled)
-if (getgenv().keysystem == true) then
-    local keySystemUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/MaGiXxScripter0/keysystemv2api/master/ui/xrer_mstudio45.lua"))()
-    keySystemUI.New({
-        ApplicationName = "FallAngelHub",
-        Name = "FallAngelHub",
-        Info = "Get Key For FallAngelHub",
-        DiscordInvite = "https://discord.gg/auzBFqDrwZ",
-        AuthType = "clientid"
-    })
-    repeat task.wait() until keySystemUI.Finished() or keySystemUI.Closed
-end
 
 -- Load UI Libraries
 local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
