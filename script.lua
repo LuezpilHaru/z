@@ -1993,13 +1993,54 @@ task.spawn(function()
         if gameProcessed then return end
         if input.KeyCode == Enum.KeyCode.Q and isFarming() then
             lastDashTime = tick()
+            
+            -- Cancel active tween immediately
+            if currentTween then
+                currentTween:Cancel()
+                currentTween = nil
+            end
+            
+            -- Suspend farming loops
+            cancelTween = true
+            
+            -- Delete virtual platforms
+            for _, child in next, workspace:GetChildren() do
+                if (child.Name == "huehueheue") then
+                    child:Destroy()
+                end
+            end
+            
+            -- Temporarily restore collision so we don't fall through the map
+            if getCharacter() then
+                for _, part in pairs(getCharacter():GetDescendants()) do
+                    if part:IsA("BasePart") then
+                        part.CanCollide = true
+                    end
+                end
+            end
         end
     end)
 
-    -- Continuous cleanup: every frame for 1.5s after last Q press
-    RunService.RenderStepped:Connect(function()
-        if (tick() - lastDashTime) <= DASH_CLEANUP_DURATION and isFarming() then
+    -- Manage dash state and cleanup
+    RunService.Heartbeat:Connect(function()
+        if not isFarming() then return end
+        
+        local timeSinceDash = tick() - lastDashTime
+        
+        if timeSinceDash <= 0.6 then
+            -- Active dash window: keep suspending tweens and clearing platforms
+            cancelTween = true
+            for _, child in next, workspace:GetChildren() do
+                if (child.Name == "huehueheue") then
+                    child:Destroy()
+                end
+            end
+        elseif timeSinceDash > 0.6 and timeSinceDash <= 1.0 then
+            -- Dash ended: cleanup lingering forces and reset velocity to stop flying
             cleanupForces()
+        elseif timeSinceDash > 1.0 and timeSinceDash <= 1.2 then
+            -- Resume farming
+            cancelTween = false
         end
     end)
 
